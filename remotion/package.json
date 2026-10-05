@@ -1,0 +1,26 @@
+{
+  "name": "editor-videos-ia",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.530",
+    "@remotion/google-fonts": "^4.0.530",
+    "@remotion/media-utils": "^4.0.530",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.530"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "^4.0.530",
+    "@remotion/renderer": "^4.0.530",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "simple-icons": "^16.33.0",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "_nota": "Único sitio con identidad. Cambia nombre, colores, fuentes y logos (PNG con transparencia en marca/).",
+  "marca": "TuMarca",
+  "persona": {
+    "nombre": "Nombre Apellido",
+    "cargo": "Fundador de TuMarca"
+  },
+  "idioma": "es-419",
+  "colores": {
+    "fondo": "#0E1116",
+    "superficie": "#161B22",
+    "superficie2": "#232A35",
+    "borde": "#30363D",
+    "texto": "#F2F4F8",
+    "textoSuave": "#9BA3AF",
+    "acento": "#7C5CFF",
+    "acento2": "#35D0FF",
+    "brillo": "#DCD3FF",
+    "etiqueta": "#F5C842",
+    "degradadoAcento": [
+      "#7C5CFF",
+      "#35D0FF"
+    ]
+  },
+  "tipografias": {
+    "titulares": {
+      "familia": "Instrument Serif",
+      "estilo": "italic",
+      "peso": 400,
+      "googleFonts": true
+    },
+    "texto": {
+      "familia": "Manrope",
+      "pesos": [
+        400,
+        500,
+        600,
+        700
+      ],
+      "googleFonts": true
+    },
+    "etiquetas": {
+      "familia": "JetBrains Mono",
+      "pesos": [
+        400,
+        500
+      ],
+      "mayusculas": true,
+      "googleFonts": true
+    }
+  },
+  "logos": {
+    "_nota": "PNG con transparencia; se copian a videos/_shared/marca/.",
+    "isotipo": "marca/isotipo.png",
+    "logotipo": "marca/logotipo.png",
+    "soloTexto": "TuMarca"
+  }
+}

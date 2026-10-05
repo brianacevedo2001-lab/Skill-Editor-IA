@@ -1,0 +1,41 @@
+{
+  "equipo": {
+    "sistema": "Windows 11",
+    "gpu": "NVIDIA con 8 GB o más (CUDA)",
+    "transcripcion": {
+      "motor": "faster-whisper",
+      "dispositivo": "cuda",
+      "modelo": "turbo",
+      "alternativa": "large-v3",
+      "vocabulario": [
+        "TuMarca",
+        "WhatsApp",
+        "Instagram"
+      ]
+    }
+  },
+  "grabacion": {
+    "programa": "OBS",
+    "metodo": "OBS graba pantalla + micro; el móvil graba la cámara; se sincronizan por la voz",
+    "pantalla": {
+      "resolucion": "2560x1440",
+      "fps": 30
+    },
+    "camara": {
+      "dispositivo": "móvil",
+      "fps": 30
+    },
+    "microfono": "micrófono USB en OBS",
+    "palmada": true
+  },
+  "brutos": {
+    "origen": "drive-escritorio",
+    "carpetaLocalDrive": "<DRIVE>/raw",
+    "_nota": "brutos.py COPIA de aquí a raw/<id>/. Nunca se procesa vídeo dentro de la carpeta de Drive."
+  },
+  "entregas": {
+    "local": "out/entregas/<id>/",
+    "carpetaLocalDrive": "<DRIVE>/final",
+    "_nota": "Las entregas se copian aquí (Drive para escritorio las sube)."
+  }
+}

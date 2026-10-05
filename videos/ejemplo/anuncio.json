@@ -1,0 +1,357 @@
+{
+ "voz": "ejemplo/locucion.voz.wav",
+ "duracion": 45.5,
+ "escenas": [
+  {
+   "tipo": "apertura",
+   "from": 0,
+   "to": 3.62,
+   "texto1": [
+    "¿Gestionar *reservas?*"
+   ],
+   "texto2": [
+    "Ahora todo",
+    "es *automático!*"
+   ],
+   "at": {
+    "cambio": 1.44,
+    "p1": [
+     0.16,
+     0.58,
+     0.78
+    ],
+    "p2": [
+     1.44,
+     1.76,
+     1.86,
+     2.42,
+     2.8,
+     3.04
+    ]
+   }
+  },
+  {
+   "tipo": "canales",
+   "from": 3.62,
+   "to": 8.55,
+   "transicion": "mancha",
+   "marca": "TuMarca",
+   "rotulo": "Todos tus canales, *una agenda*",
+   "canales": [
+    {
+     "canal": "whatsapp",
+     "nombre": "Marta Ruiz",
+     "texto": "¿Tienen fecha para el sábado?",
+     "at": 4.82
+    },
+    {
+     "canal": "instagram",
+     "nombre": "@carlos.demo",
+     "texto": "¿Precio de la sesión familiar?",
+     "at": 5.95
+    },
+    {
+     "canal": "web",
+     "nombre": "Ana Torres · Web",
+     "texto": "Quiero reservar un retrato",
+     "at": 6.79
+    }
+   ],
+   "at": {
+    "marca": 4.26,
+    "junta": 7.25,
+    "rotulo": 7.25
+   }
+  },
+  {
+   "tipo": "medianoche",
+   "from": 8.55,
+   "to": 10.62,
+   "transicion": "mancha",
+   "transicionColor": "tinta",
+   "transicionY": 0.2,
+   "rotulo": "¿Reservan a *medianoche?*",
+   "hora": "11:58",
+   "fecha": "jueves, 1 de octubre",
+   "notificaciones": [
+    {
+     "canal": "whatsapp",
+     "titulo": "Marta Ruiz",
+     "texto": "¿Queda hueco este sábado? 📸",
+     "at": 8.89
+    },
+    {
+     "canal": "instagram",
+     "titulo": "laura.demo",
+     "texto": "¿La sesión incluye fotos impresas?",
+     "at": 9.83
+    }
+   ]
+  },
+  {
+   "tipo": "chat",
+   "from": 10.62,
+   "to": 15.75,
+   "transicion": "mancha",
+   "transicionX": 0.8,
+   "transicionY": 0.85,
+   "rotulo": "Contesta *al instante*",
+   "cliente": "Laura Pérez",
+   "iniciales": "LP",
+   "canal": "instagram",
+   "canalNombre": "Instagram",
+   "mensajes": [
+    {
+     "de": "cliente",
+     "texto": "Hola 👋 ¿la sesión de retrato incluye fotos impresas?",
+     "at": 10.85
+    },
+    {
+     "de": "ia",
+     "texto": "¡Hola, Laura! Sí: 10 fotos editadas y 3 impresas. Tengo hueco el sábado a las 10:00.",
+     "at": 11.85
+    }
+   ],
+   "link": {
+    "titulo": "Sesión de retrato · sábado 10:00",
+    "monto": "$180.000",
+    "at": 14.89
+   },
+   "at": {
+    "rotulo": 10.8
+   }
+  },
+  {
+   "tipo": "leads",
+   "from": 15.75,
+   "to": 19.85,
+   "rotulo": "Cada cliente, *priorizado*",
+   "total": "120 contactos",
+   "filas": [
+    {
+     "nombre": "Sofía Díaz",
+     "canal": "whatsapp",
+     "etapa": "Sesión cerrada",
+     "puntaje": 118,
+     "temp": "Caliente"
+    },
+    {
+     "nombre": "Elena Mora",
+     "canal": "whatsapp",
+     "etapa": "Pago pendiente",
+     "puntaje": 96,
+     "temp": "Caliente"
+    },
+    {
+     "nombre": "Carlos Gil",
+     "canal": "instagram",
+     "etapa": "Reservado",
+     "puntaje": 88,
+     "temp": "Caliente"
+    },
+    {
+     "nombre": "Laura Pérez",
+     "canal": "instagram",
+     "etapa": "Pide atención humana",
+     "puntaje": 78,
+     "temp": "Tibio"
+    },
+    {
+     "nombre": "Marta Ruiz",
+     "canal": "whatsapp",
+     "etapa": "Propuesta enviada",
+     "puntaje": 72,
+     "temp": "Tibio"
+    },
+    {
+     "nombre": "Rosa Vega",
+     "canal": "web",
+     "etapa": "Nuevo",
+     "puntaje": 15,
+     "temp": "Frío"
+    }
+   ],
+   "at": {
+    "rotulo": 15.89,
+    "Caliente": 17.88,
+    "Tibio": 18.66,
+    "Frío": 19.32
+   }
+  },
+  {
+   "tipo": "handoff",
+   "from": 19.85,
+   "to": 23.6,
+   "rotulo": "Tu equipo, *con contexto*",
+   "cliente": "Laura Pérez",
+   "iniciales": "LP",
+   "temp": "Tibio",
+   "nota": "Te avisa al instante",
+   "contexto": [
+    {
+     "k": "Motivo",
+     "v": "Quiere elegir el fondo antes de reservar"
+    },
+    {
+     "k": "Le interesa",
+     "v": "Sesión de retrato · sábado"
+    },
+    {
+     "k": "Va en",
+     "v": "Propuesta enviada · $180.000"
+    }
+   ],
+   "at": {
+    "rotulo": 20.0,
+    "persona": 20.84,
+    "contexto": 21.86
+   }
+  },
+  {
+   "tipo": "pago",
+   "from": 23.6,
+   "to": 27.15,
+   "rotulo": "Cobra *con un toque*",
+   "cliente": "Elena Mora · WhatsApp",
+   "monto": "$320.000",
+   "detalle": "Transferencia · hace 4 min",
+   "at": {
+    "rotulo": 23.76,
+    "comprobante": 24.4,
+    "cursor": 25.26,
+    "toque": 26.42
+   }
+  },
+  {
+   "tipo": "listo",
+   "from": 27.15,
+   "to": 28.0,
+   "texto": "¡Listo!",
+   "at": {
+    "listo": 27.3
+   }
+  },
+  {
+   "tipo": "pildoras",
+   "from": 28.0,
+   "to": 30.15,
+   "texto": [
+    "Adiós a las reservas",
+    "*perdidas*"
+   ],
+   "at": {
+    "palabras": [
+     28.07,
+     28.16,
+     28.61,
+     28.75,
+     29.19,
+     29.35
+    ]
+   }
+  },
+  {
+   "tipo": "hoy",
+   "from": 30.15,
+   "to": 34.05,
+   "transicion": "mancha",
+   "rotulo": "Tu día, *de un vistazo*",
+   "fecha": "Jueves, 1 de octubre",
+   "cuenta": 13,
+   "tarjetas": [
+    {
+     "titulo": "Reservas por confirmar",
+     "detalle": "Pedro · Lucía · Iván",
+     "n": 3,
+     "boton": "Revisar",
+     "alerta": true
+    },
+    {
+     "titulo": "Pagos por confirmar",
+     "detalle": "Transferencia · $180.000",
+     "n": 1,
+     "boton": "Confirmar"
+    },
+    {
+     "titulo": "Clientes nuevos",
+     "detalle": "Elena, Carlos y 1 más",
+     "n": 3
+    },
+    {
+     "titulo": "Sesiones de hoy",
+     "detalle": "Retrato · 3:00 p. m.",
+     "n": 2
+    },
+    {
+     "titulo": "Mensajes sin leer",
+     "detalle": "✓ Todo al día"
+    },
+    {
+     "titulo": "Cobros pendientes",
+     "detalle": "$90.000 · Carlos Gil",
+     "n": 1
+    }
+   ],
+   "at": {
+    "rotulo": 30.3,
+    "cuenta": 31.21
+   }
+  },
+  {
+   "tipo": "recupera",
+   "from": 34.05,
+   "to": 38.0,
+   "rotulo": "Recordatorios *automáticos*",
+   "resumen": "1 pago pendiente · $90.000",
+   "cliente": "Carlos Gil",
+   "hace": "link enviado · hace 6 h",
+   "monto": "$90.000",
+   "at": {
+    "rotulo": 34.17,
+    "cursor": 35.0,
+    "recupera": 35.95,
+    "pagado": 37.13
+   }
+  },
+  {
+   "tipo": "remate",
+   "from": 38.0,
+   "to": 41.95,
+   "transicion": "mancha",
+   "lineas": [
+    "¡Tú *creas!*",
+    "TuMarca *organiza.*"
+   ],
+   "gigante": "24/7",
+   "at": {
+    "palabras": [
+     6.63,
+     38.38,
+     39.14,
+     39.7
+    ],
+    "gigante": 40.48
+   }
+  },
+  {
+   "tipo": "final",
+   "from": 41.95,
+   "to": 45.5,
+   "transicion": "mancha",
+   "marca": "TuMarca",
+   "lema": "Tu agenda, *siempre abierta*",
+   "boton": "tumarca.com",
+   "at": {
+    "lema": 42.7,
+    "boton": 43.3
+   }
+  }
+ ],
+ "musica": {
+  "src": "_shared/music/dont_fret.m4a",
+  "volumen": 0.18,
+  "desde": 109.66
+ },
+ "portada": 44.6,
+ "_nota": "Ejemplo con un negocio ficticio. Tiempos = segundos de la locución (videos/ejemplo/locucion.voz.wav, que NO se incluye: genérala con tu guion y recalcula los tiempos con las palabras alineadas)."
+}

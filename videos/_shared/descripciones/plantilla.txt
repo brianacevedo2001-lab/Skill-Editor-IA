@@ -1,0 +1,14 @@
+{resumen}
+
+📌 Capítulos
+{capitulos}
+
+🔗 Conoce {marca}: {sitio}
+👤 {persona}
+
+📲 Sígueme:
+{redes}
+
+🔔 Suscríbete a {canal} para más episodios.
+
+#Hashtag1 #Hashtag2 #Hashtag3

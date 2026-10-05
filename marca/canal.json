@@ -1,0 +1,15 @@
+{
+  "nombre": "tucanal",
+  "handle": "@tucanal",
+  "avatar": "marca/avatar.png",
+  "suscriptores": 0,
+  "idioma": "es-419",
+  "traduccionAutomatica": true,
+  "sitio": "https://tumarca.com",
+  "redes": {
+    "YouTube": "https://www.youtube.com/@tucanal",
+    "TikTok": "https://www.tiktok.com/@tucanal",
+    "Instagram": "https://www.instagram.com/tucanal/",
+    "LinkedIn": "https://www.linkedin.com/in/tuperfil/"
+  }
+}

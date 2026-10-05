@@ -1,0 +1,11 @@
+# Python 3.13 (probado en Windows 11 + NVIDIA CUDA 12)
+numpy
+pillow
+scipy
+faster-whisper==1.2.1
+nvidia-cublas-cu12
+nvidia-cudnn-cu12
+rapidocr-onnxruntime
+# PyTorch con CUDA (alineación forzada y recorte de persona):
+#   pip install torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cu128
+# Opcional (plan B de Drive): google-api-python-client google-auth-oauthlib

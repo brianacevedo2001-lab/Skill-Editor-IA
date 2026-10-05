@@ -1,0 +1,212 @@
+{
+ "aire": {
+  "ancla": "fin",
+  "dur": 0.544,
+  "familia": "aire",
+  "gain_db": -3.0,
+  "pico": 0.513
+ },
+ "aire_salida": {
+  "ancla": "inicio",
+  "dur": 0.5,
+  "familia": "aire",
+  "gain_db": -3.0,
+  "pico": 0.013
+ },
+ "barrido": {
+  "ancla": "pico",
+  "dur": 1.093,
+  "familia": "aire",
+  "gain_db": -3.0,
+  "pico": 0.534
+ },
+ "bip": {
+  "ancla": "inicio",
+  "dur": 0.12,
+  "familia": "tick",
+  "gain_db": -2.0,
+  "pico": 0.095
+ },
+ "brillo": {
+  "ancla": "inicio",
+  "dur": 1.6,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.06
+ },
+ "campana": {
+  "ancla": "inicio",
+  "dur": 1.5,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.126
+ },
+ "click": {
+  "ancla": "inicio",
+  "dur": 0.03,
+  "familia": "tick",
+  "gain_db": -2.0,
+  "pico": 0.003
+ },
+ "corte": {
+  "ancla": "inicio",
+  "dur": 0.28,
+  "familia": "corte",
+  "gain_db": -3.0,
+  "pico": 0.003
+ },
+ "descarte": {
+  "ancla": "inicio",
+  "dur": 0.45,
+  "familia": "tick",
+  "gain_db": -2.0,
+  "pico": 0.005
+ },
+ "fade_out": {
+  "ancla": "inicio",
+  "dur": 1.1,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.013
+ },
+ "fallo": {
+  "ancla": "inicio",
+  "dur": 0.5,
+  "familia": "glitch",
+  "gain_db": -6.0,
+  "pico": 0.007
+ },
+ "glitch": {
+  "ancla": "inicio",
+  "dur": 0.35,
+  "familia": "glitch",
+  "gain_db": -6.0,
+  "pico": 0.003
+ },
+ "glitch_fuerte": {
+  "ancla": "inicio",
+  "dur": 0.7,
+  "familia": "glitch",
+  "gain_db": -6.0,
+  "pico": 0.003
+ },
+ "golpe": {
+  "ancla": "pico",
+  "dur": 0.9,
+  "familia": "golpe",
+  "gain_db": 0.0,
+  "pico": 0.004
+ },
+ "golpe_corto": {
+  "ancla": "pico",
+  "dur": 0.35,
+  "familia": "golpe",
+  "gain_db": 0.0,
+  "pico": 0.003
+ },
+ "impacto": {
+  "ancla": "pico",
+  "dur": 2.6,
+  "familia": "golpe",
+  "gain_db": 0.0,
+  "pico": 0.028
+ },
+ "nota": {
+  "ancla": "inicio",
+  "dur": 1.6,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.007
+ },
+ "nota_doble": {
+  "ancla": "inicio",
+  "dur": 1.2,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.116
+ },
+ "nota_mi": {
+  "ancla": "inicio",
+  "dur": 1.6,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.007
+ },
+ "notificacion": {
+  "ancla": "inicio",
+  "dur": 0.6,
+  "familia": "aviso",
+  "gain_db": -2.0,
+  "pico": 0.134
+ },
+ "ping": {
+  "ancla": "inicio",
+  "dur": 1.2,
+  "familia": "nota",
+  "gain_db": -4.0,
+  "pico": 0.005
+ },
+ "sub_hit": {
+  "ancla": "inicio",
+  "dur": 1.4,
+  "familia": "golpe",
+  "gain_db": 0.0,
+  "pico": 0.012
+ },
+ "subida": {
+  "ancla": "fin",
+  "dur": 4.585,
+  "familia": "subida",
+  "gain_db": -4.0,
+  "pico": 4.554
+ },
+ "swell": {
+  "ancla": "inicio",
+  "dur": 1.271,
+  "familia": "subida",
+  "gain_db": -4.0,
+  "pico": 1.209
+ },
+ "tecla": {
+  "ancla": "inicio",
+  "dur": 0.045,
+  "familia": "tecla",
+  "gain_db": -4.0,
+  "pico": 0.003
+ },
+ "tecleo": {
+  "ancla": "inicio",
+  "dur": 1.4,
+  "familia": "tecla",
+  "gain_db": -4.0,
+  "pico": 0.796
+ },
+ "tick": {
+  "ancla": "inicio",
+  "dur": 0.06,
+  "familia": "tick",
+  "gain_db": -2.0,
+  "pico": 0.003
+ },
+ "tick_suave": {
+  "ancla": "inicio",
+  "dur": 0.05,
+  "familia": "tick",
+  "gain_db": -2.0,
+  "pico": 0.003
+ },
+ "transicion": {
+  "ancla": "fin",
+  "dur": 0.786,
+  "familia": "aire",
+  "gain_db": -3.0,
+  "pico": 0.767
+ },
+ "whoosh": {
+  "ancla": "inicio",
+  "dur": 0.695,
+  "familia": "aire",
+  "gain_db": -3.0,
+  "pico": 0.336
+ }
+}

@@ -1,0 +1,7 @@
+raw/
+out/
+secrets/
+.venv/
+remotion/node_modules/
+__pycache__/
+*.ocr_cache.json
