@@ -1,7 +1,9 @@
 # Editor de vídeos con IA (marca blanca)
 
 Proyecto marca blanca: nada de nombres, logos ni colores fijos en el código. Todo sale de `marca/`
-(`marca.json` identidad y colores, `canal.json` canal, sitio y redes, `proyecto.json` equipo y carpetas).
+(`marca.json` identidad y colores, `canal.json` canal, sitio y redes, `proyecto.json` equipo, carpetas y motor de render).
+Dos motores de render conviven: **Remotion** (por defecto, todo lo que ya funcionaba) y **HyperFrames** (recomendado para
+piezas nuevas: §8).
 Idioma de trabajo: español. Probado de punta a punta con un proyecto real (aquí, «proyecto01»: episodio de una serie de YouTube).
 
 **Reglas de trabajo (adáptalas a tu caso)**
@@ -28,12 +30,14 @@ marca/            identidad (único sitio con nombres, colores, logos, redes)
 pipeline/         scripts Python (numerados en el orden del flujo) + comun.py
 remotion/         composiciones: Intro|Disclaimer|Catalogo (Parte), Grueso/GruesoGraficos, Short, Linkedin,
                   Lamina, Miniatura · escenas en src/escenas · scripts/qa.mjs, laminas.mjs, logos.mjs
+hyperframes/      plantillas HTML del motor HyperFrames (§8): escenas, subtitulos, anuncio, miniatura, lamina + comun/
 videos/           publicDir de Remotion: SOLO lo que Remotion lee (cortes finales, JSON, broll, música, logos)
   _shared/        music/, logos/, fx/, marca/, descripciones/plantilla.txt, plantillas/guiones.md
   <id>/           plan.md, guia_grabacion.md, partes.json, <parte>.json, shorts.json, linkedin.json,
                   capitulos_youtube.txt, resumen.txt, miniatura*.json, broll/
 raw/<id>/         brutos copiados de Drive + intermedios pesados (partes/*_bruto.mov, grueso_*.mp4)
-out/              renders por parte, qa/, miniatura/, entregas/<id>/ (lo que va a Drive), lote_<id>.cmd/.log
+out/              renders por parte, qa/, miniatura/, entregas/<id>/ (lo que va a Drive), lote_<id>.cmd/.log,
+                  hyperframes/<trabajo>/ (proyectos de HyperFrames que arma motor.py) y hyperframes/_fuentes/ (caché)
 ```
 
 ## 3. Flujo completo de un proyecto (como proyecto01)
@@ -190,6 +194,8 @@ palabra a palabra con la activa en acento, zona segura de las apps, cierre con `
    título con un objeto relacionado desenfocado detrás.
 3. Texto con Remotion: `videos/<id>/miniatura.json` {imagen, etiqueta, destacado, titulo} →
    `npx remotion still src/index.ts Miniatura ../out/miniatura/<id>_miniatura.jpg --props='{"guion":"<id>/miniatura.json"}' --image-format=jpeg --jpeg-quality=92 --scale=0.6667`.
+   Con el motor elegido (Remotion o HyperFrames, mismo JSON y mismo 1280×720):
+   `python pipeline/motor.py still Miniatura <id>/miniatura.json out/miniatura/<id>_miniatura.jpg [--motor hyperframes]`.
 
 ## 7. Herramientas externas
 
@@ -211,11 +217,80 @@ palabra a palabra con la activa en acento, zona segura de las apps, cierre con `
 - **Modelos locales (PyTorch cu128 en .venv)**: alineación forzada MMS_FA de torchaudio (`alinear.py`, 1,2 GB en
   la caché de torch) y Robust Video Matting (`recortar.py`, torch.hub, GPL-3.0 usado como herramienta externa).
 
+## 8. Motor HyperFrames
+
+[HyperFrames](https://hyperframes.heygen.com) (HeyGen, Apache-2.0) renderiza vídeo desde HTML: cada composición es una
+página con una línea de tiempo GSAP en pausa que el renderizador recorre cuadro a cuadro (determinista). Convive con
+Remotion: **lo que ya funciona sigue igual** y HyperFrames se elige por configuración. **Recomendado para piezas nuevas.**
+
+**Cuándo usarlo**: escenas y gráficos animados (títulos, tarjetas, lower thirds, datos, barras, transiciones),
+verticales con subtítulos animados (Shorts, Reels, TikTok, LinkedIn 4:5), anuncios y promos, miniaturas y láminas.
+Remotion se queda para las partes a cámara (Intro/Parte con capas detrás de la persona, iris, fondos 3D), el grueso
+(render híbrido) y las escenas que HyperFrames aún no tiene (`orbOpen`, `notificacion`, `buscador`, `pasos`,
+`comentario`, `rise`, `orbChips`, `dissolve`, `broll`; en anuncios `canales`, `medianoche`, `leads`, `handoff`, `pago`,
+`hoy`, `recupera`, que en HyperFrames muestran solo su `rotulo`, con aviso del script).
+
+**Cómo se elige** (`pipeline/motor.py`, gana el primero definido): `--motor remotion|hyperframes` en el script →
+`"motor"` en el guion de la pieza (`anuncio.json`, `shorts.json`, `linkedin.json`, `miniatura.json`, `escenas.json`) →
+`"motor"` en `marca/proyecto.json` → `remotion`. `python pipeline/motor.py cual [<id>/<guion>.json]` dice cuál y por qué.
+
+**Instalación** (las skills de HyperFrames NO se copian a este repo; son de HeyGen y se actualizan con su CLI):
+```
+node -v                        # 22 o más
+npx hyperframes skills         # instala todas las skills oficiales para Claude Code (~/.claude/skills)
+npx hyperframes skills check   # ¿al día?  ·  npx hyperframes skills update → actualiza
+npx hyperframes doctor         # Chrome headless, ffmpeg, memoria
+```
+Sin el CLI: `npx skills add heygen-com/hyperframes --all`. En Windows, `npx hyperframes skills` desde **PowerShell o
+CMD** (desde Git Bash falla con «npx not found»). Antes de escribir o cambiar una plantilla, leer las skills
+`hyperframes` (contrato) y `hyperframes-cli`.
+
+**Cómo se renderiza**
+```
+python pipeline/motor.py video Escenas <id>/escenas.json out/<id>_escenas.mp4        # 16:9 (EscenasVertical = 9:16)
+python pipeline/motor.py video Escenas <id>/escenas.json out/<id>_capa.mov           # "fondo": "transparente" → ProRes 4444 con alfa
+python pipeline/09_shorts.py <id> --motor hyperframes      # Short + Linkedin con hyperframes/subtitulos
+python pipeline/anuncio.py <id> --motor hyperframes        # Anuncio 9:16 + AnuncioLinkedin 4:5 con hyperframes/anuncio
+python pipeline/10_linkedin.py <id> --motor hyperframes    # láminas con hyperframes/lamina (un snapshot por lámina)
+python pipeline/motor.py still Miniatura <id>/miniatura.json out/miniatura/<id>_miniatura.jpg --motor hyperframes
+python pipeline/motor.py proyecto <Composición> <id>/<guion>.json   # solo arma el proyecto, para revisarlo:
+#   cd out/hyperframes/<trabajo> && npx hyperframes check  ·  npx hyperframes snapshot --at 1,3.5  ·  npx hyperframes preview
+```
+`motor.py` copia `hyperframes/<plantilla>/` a `out/hyperframes/<trabajo>/`, escribe `assets/datos.js` (marca + guion),
+mete en `assets/` las fuentes, los logos y los medios (enlace duro), escribe en el HTML los clips con tiempo y llama a
+`npx hyperframes render` (o `snapshot` para cuadros fijos). Las exportaciones por red son las de siempre
+(`09_shorts.exportar`: −14 LUFS, TP −1,5, YouTube con música, IG/TikTok/LinkedIn sin ella). `HF_WORKERS=2` limita los
+Chrome en paralelo (~256 MB cada uno) si hay poca memoria.
+
+**Reglas**
+- **Portada**: todo MP4 de HyperFrames pasa por `comun.portada(mp4, t)`: el cuadro t (pantalla ya armada) reemplaza al
+  cuadro 0 (recodifica solo el vídeo, marca `comment=portada …` para no repetir) y queda como `<nombre>_portada.jpg`.
+  t = `--portada` › `"portada"` del guion › 1,5 s; en shorts, 1,33 s (el mismo cuadro 40 de la portada de Remotion).
+  Revisar SIEMPRE el cuadro 0: `ffmpeg -i x.mp4 -frames:v 1 p.jpg`.
+- Marca blanca también aquí: nada de colores, nombres ni fuentes en las plantillas; todo llega como variables CSS
+  (`--acento`, `--f-titulares`…) y `window.DATOS` desde `marca/*.json`. Texto sobre el acento: `--sobre-acento`.
+- Fuentes: HyperFrames solo resuelve por nombre las que trae (Inter, JetBrains Mono, Montserrat…); el resto necesita
+  `@font-face` con archivo. `motor.py` baja de Google Fonts las de `marca.json` (latin + latin-ext) a
+  `out/hyperframes/_fuentes/`; una fuente propia va con `"archivo": "marca/fuentes/x.woff2"` en su tipografía.
+- Contrato (lo comprueba `npx hyperframes check`): elementos con tiempo = `.clip` con `data-start`/`data-duration`
+  escritos en el HTML (no creados por script); una sola línea de tiempo GSAP en pausa registrada en
+  `window.__timelines["<id>"]`, construida de forma síncrona y en segundos ABSOLUTOS; nunca animar un `.clip` (se anima
+  su hijo); nada de `Date.now()`, azar sin semilla, red ni temporizadores; `<video>` siempre `muted` y la voz como
+  `<audio id>` aparte; nada de `<br>` en texto; sin filtros CSS sobre el metraje (se oscurece con una capa).
+- Subtítulos: las palabras salen del pipeline (02_transcribe → 03_tomas → 01_cut_silences + alinear.py), trasladadas al
+  short por 09_shorts; grupos de ≤ 3 palabras / ≤ 18 letras, corte en pausa ≥ 0,3 s o fin de frase, palabra activa en
+  acento ×1,08, y sin subtítulos bajo el gancho, los rótulos ni el cierre (igual que Short.tsx).
+- Zonas seguras y tamaños como en Remotion (9:16: arriba 230, abajo 450, izquierda 70, derecha 170; piezas ×1,22).
+- Texto ≥ 28 px (lo pide `check`); degradados con texto encima: `--degradado` (se queda cerca de `--acento`).
+- Las salidas de prueba y los proyectos armados van a `out/` (fuera de git); nunca subir renders ni `node_modules`.
+
 ## Entorno
 
 - Windows 11 · i9-14900HX · RTX 4060 Laptop 8 GB · 48 GB RAM.
 - Python: `.venv/` (3.13): `.venv\Scripts\python.exe pipeline\<script>.py`. ffmpeg 9 (winget Gyan.FFmpeg,
   `comun.py` lo localiza). Remotion 4 en `remotion/` (publicDir `../videos`); marca en `remotion/src/marca.ts`.
+- HyperFrames (opcional): Node 22+, `npx hyperframes` (nada instalado en el repo; baja su Chrome headless la primera
+  vez a `~/.cache/hyperframes/`). Skills con `npx hyperframes skills` (§8).
 - Logos de `marca/` copiados a `videos/_shared/marca/` (Remotion solo sirve desde publicDir).
 
 ## Reglas técnicas
@@ -439,3 +514,19 @@ palabra a palabra con la activa en acento, zona segura de las apps, cierre con `
   carpeta temporal que desaparece): es puntual; anuncio.py reintenta hasta 3 veces.
 - Hoja de contactos con `fps=2/3`: no muestrea en los segundos «redondos»; un fotograma «vacío» puede ser la
   entrada de una escena. Comprobar con `-ss <t>` exacto antes de tocar nada.
+- **HyperFrames (integración, 2026-11)**:
+  - `npx hyperframes skills` desde Git Bash falla con «npx not found» (el CLI lanza `npx` sin `.cmd`): correrlo desde
+    PowerShell o CMD. `npx skills add heygen-com/hyperframes --all` solo trae 9 skills; el CLI instala el juego completo.
+  - `hyperframes check` deja un navegador «caliente» (`warmCheck.js`, 5 min) con las carpetas del proyecto abiertas: en
+    Windows `rmtree` falla con «Acceso denegado». `motor.py` borra archivos, no carpetas, y no toca `.hyperframes/`.
+  - Un comentario HTML de la plantilla que contenía `<!--…-->` se cerraba antes de tiempo y su texto salía en el vídeo
+    (letra diminuta arriba a la izquierda). Nada de `<!--` dentro de comentarios; mirar el cuadro entero en la QA.
+  - GSAP no interpola colores escritos como `var(--x)`: los tweens de color usan el hex de `DATOS.marca.colores`.
+  - Degradado `acento → acento2` con texto blanco: con un acento2 claro (#35D0FF) el contraste bajaba a 2,5:1 (`check`
+    lo marca). `--degradado` mezcla solo un 28 % de acento2.
+  - Remotion corre con `cwd=remotion/`: una salida relativa (`out/x.jpg`) acababa en `remotion/out/`. `motor.py` pasa
+    siempre rutas absolutas.
+  - En un equipo sin NVIDIA, `--hardware-acceleration=if-possible` hace que Remotion elija `h264_nvenc` y el render muere
+    con `EPIPE` («Could not open encoder»). Ahí, quitar el flag; HyperFrames no lo necesita.
+  - Medido en un equipo sin GPU dedicada (i5 de 12 hilos, 16 GB): 15 s de escenas 1080p en 1 min 8 s con 2 workers;
+    vertical de 12 s con vídeo y subtítulos en 1 min 27 s.

@@ -3,13 +3,14 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:7C5CFF,100:35D0FF&height=220&section=header&text=Skill-Editor-IA&fontSize=52&fontColor=F2F4F8&fontAlignY=38&desc=Graba.%20Suelta%20los%20brutos.%20Claude%20Code%20edita%20el%20resto.&descAlignY=60&descSize=18&animation=fadeIn" width="100%" alt="Skill-Editor-IA"/>
 
 <a href="#-qué-hace">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&duration=2800&pause=700&color=7C5CFF&center=true&vCenter=true&width=720&lines=Corta+silencios+y+tomas+falsas+solo;Sincroniza+c%C3%A1mara+y+pantalla+por+la+voz;Anima+escenas+3D+con+Remotion;1+grabaci%C3%B3n+%E2%86%92+YouTube+%2B+Shorts+%2B+Reels+%2B+TikTok+%2B+LinkedIn;100%25+marca+blanca%3A+tu+logo%2C+tus+colores" alt="Lo que hace"/>
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&duration=2800&pause=700&color=7C5CFF&center=true&vCenter=true&width=720&lines=Corta+silencios+y+tomas+falsas+solo;Sincroniza+c%C3%A1mara+y+pantalla+por+la+voz;Anima+escenas+con+Remotion+o+HyperFrames;1+grabaci%C3%B3n+%E2%86%92+YouTube+%2B+Shorts+%2B+Reels+%2B+TikTok+%2B+LinkedIn;100%25+marca+blanca%3A+tu+logo%2C+tus+colores" alt="Lo que hace"/>
 </a>
 
 <br/>
 
 ![Claude Code](https://img.shields.io/badge/Claude_Code-skill-7C5CFF?style=for-the-badge&logo=anthropic&logoColor=white)
 ![Remotion](https://img.shields.io/badge/Remotion-4-0B84F3?style=for-the-badge&logo=react&logoColor=white)
+![HyperFrames](https://img.shields.io/badge/HyperFrames-HTML%E2%86%92v%C3%ADdeo-FF5A36?style=for-the-badge&logo=html5&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![ffmpeg](https://img.shields.io/badge/ffmpeg-NVENC-007808?style=for-the-badge&logo=ffmpeg&logoColor=white)
 ![Whisper](https://img.shields.io/badge/faster--whisper-CUDA-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
@@ -27,7 +28,8 @@ Tú grabas. Claude Code corta, sincroniza, anima, mezcla, renderiza y te entrega
 ## 🎯 Qué hace
 
 > Abres la carpeta con **Claude Code**, le dices *«edítame el episodio de hoy»* y sigue un manual de producción
-> probado en vídeos reales: `CLAUDE.md`. No es un prompt bonito: son **26 scripts**, **más de 30 escenas animadas** y
+> probado en vídeos reales: `CLAUDE.md`. No es un prompt bonito: son **27 scripts**, **más de 30 escenas animadas**, **dos motores
+> de render** (Remotion y HyperFrames) y
 > **más de 90 reglas técnicas** sacadas de cosas que fallaron de verdad y se arreglaron.
 
 <table>
@@ -55,7 +57,7 @@ Tú grabas. Claude Code corta, sincroniza, anima, mezcla, renderiza y te entrega
 <td width="50%" valign="top">
 
 ### ✨ Motion graphics con criterio
-- Escenas 3D en Remotion que entran **en la palabra exacta** que se oye
+- Escenas que entran **en la palabra exacta** que se oye, en **Remotion** o en **HyperFrames** (HTML + GSAP)
 - Titulares **detrás de tu cabeza** (recorte de persona con Robust Video Matting)
 - Transición iris desde la cara, punch-in alterno, SFX alineados al fotograma
 - Logos automáticos cuando nombras una marca
@@ -82,7 +84,7 @@ flowchart LR
     A["🎙️ Grabación<br/>móvil + OBS + pantalla"] --> B["🔗 Sync por voz"]
     B --> C["📝 Whisper + alineación"]
     C --> D["✂️ Cortes y tomas"]
-    D --> E["🎨 Escenas Remotion"]
+    D --> E["🎨 Escenas<br/>Remotion · HyperFrames"]
     E --> F["🎚️ Mezcla −14 LUFS"]
     F --> Y["▶️ YouTube 16:9<br/>capítulos + miniatura"]
     F --> S["📱 Shorts con música"]
@@ -112,7 +114,12 @@ flowchart LR
 
 ## 🧩 Catálogo de escenas
 
-Escribes un JSON, cada escena se ancla a una frase de la voz, y Remotion hace el resto en **16:9, 9:16 y 4:5**.
+Escribes un JSON, cada escena se ancla a una frase de la voz, y el motor de render hace el resto en **16:9, 9:16 y 4:5**.
+
+> 🧪 **Dos motores, un mismo JSON.** Remotion sigue siendo el de siempre. **HyperFrames** (composiciones HTML + GSAP de
+> HeyGen) es el recomendado para piezas nuevas: escenas y gráficos, subtítulos animados, anuncios, miniaturas y láminas.
+> Se elige con `"motor": "remotion" | "hyperframes"` en `marca/proyecto.json` (por defecto `remotion`), en el guion de la
+> pieza o con `--motor` en cada script. Ver [🧪 Motor HyperFrames](#-motor-hyperframes-opcional).
 
 <details open>
 <summary><b>🎥 Sobre la cámara</b></summary>
@@ -159,6 +166,22 @@ Ejemplo completo en [`videos/ejemplo/anuncio.json`](videos/ejemplo/anuncio.json)
 
 </details>
 
+<details>
+<summary><b>🧪 Con HyperFrames</b> (plantillas en <code>hyperframes/</code>)</summary>
+
+| Plantilla | Composición | Escenas / qué hace |
+|---|---|---|
+| `escenas` | `Escenas` 16:9 · `EscenasVertical` 9:16 | `titulo` (= `callout`), `lowerThird`, `tarjetas` (= `lineup`), `dato` (= `revealStat`), `barras` (= `bars`), transición `mancha`/`barrido`; fondo de marca o **transparente** (`.mov` con alfa para superponer) |
+| `subtitulos` | `Short` 9:16 · `Linkedin` 4:5 | Subtítulos palabra a palabra con la activa en acento (palabras alineadas del pipeline), gancho, punch-in en los cortes, rótulos y cierre |
+| `anuncio` | `Anuncio` 9:16 · `AnuncioLinkedin` 4:5 | `apertura`, `chat`, `remate`, `final`, `pildoras` + las de `escenas`; las demás muestran su `rotulo` |
+| `miniatura` | `Miniatura` | Imagen base + etiqueta, destacado y título (1280×720) |
+| `lamina` | `Lamina` | Carrusel de LinkedIn y su imagen suelta (1080×1350) |
+
+Ejemplos: [`videos/ejemplo/escenas.json`](videos/ejemplo/escenas.json) · [`miniatura.json`](videos/ejemplo/miniatura.json) ·
+[`linkedin.json`](videos/ejemplo/linkedin.json).
+
+</details>
+
 ---
 
 ## 🏷️ 100 % marca blanca
@@ -172,7 +195,8 @@ marca/
 └── proyecto.json   👥 equipo, carpetas, vocabulario para Whisper
 ```
 
-Cambia `"acento": "#7C5CFF"` por tu color y **todos** los vídeos, shorts, miniaturas y carruseles cambian.
+Cambia `"acento": "#7C5CFF"` por tu color y **todos** los vídeos, shorts, miniaturas y carruseles cambian, con
+Remotion y con HyperFrames (las tipografías de Google Fonts se descargan solas para HyperFrames).
 
 ---
 
@@ -200,6 +224,10 @@ cd remotion && npm install && cd ..
 # 5. Librerías de efectos y logos
 .venv\Scripts\python pipeline/sfx_generar.py
 node remotion/scripts/logos.mjs
+
+# 6. (Opcional) HyperFrames: Node 22+ y las skills oficiales para Claude Code (no vienen en este repo)
+npx hyperframes skills          # instala las skills de HyperFrames (en Windows, desde PowerShell o CMD)
+npx hyperframes doctor          # comprueba Chrome, ffmpeg y memoria
 ```
 
 Y luego:
@@ -208,6 +236,26 @@ Y luego:
 claude
 > Tengo los brutos del episodio 1 en Drive. Edítalo y sácame los shorts.
 ```
+
+---
+
+## 🧪 Motor HyperFrames (opcional)
+
+[HyperFrames](https://hyperframes.heygen.com) convierte HTML en vídeo: cada composición es una página con una línea
+de tiempo GSAP que se recorre cuadro a cuadro, así que cada render es idéntico. Aquí convive con Remotion:
+
+```bash
+python pipeline/motor.py cual                                   # qué motor toca y por qué
+python pipeline/motor.py video Escenas ejemplo/escenas.json out/escenas.mp4
+python pipeline/09_shorts.py <id> --motor hyperframes            # shorts con subtítulos animados
+python pipeline/anuncio.py <id> --motor hyperframes              # anuncio 9:16 + 4:5
+python pipeline/10_linkedin.py <id> --motor hyperframes          # carrusel y post
+python pipeline/motor.py still Miniatura <id>/miniatura.json out/miniatura/<id>_miniatura.jpg
+```
+
+`pipeline/motor.py` arma un proyecto normal de HyperFrames en `out/hyperframes/<trabajo>/` (marca, fuentes, medios),
+renderiza con `npx hyperframes render` y pone la **portada en el cuadro 0** de cada MP4 (nunca negro). Las exportaciones
+siguen igual: −14 LUFS, versión con y sin música, 4:5 para LinkedIn.
 
 ---
 
@@ -234,8 +282,9 @@ Y cuando algo nuevo falla, el agente lo arregla **y lo apunta**. El sistema apre
 
 ```
 📁 marca/       identidad (el único sitio con nombres, colores, logos, redes)
-📁 pipeline/    26 scripts Python numerados en el orden del flujo
+📁 pipeline/    27 scripts Python numerados en el orden del flujo
 📁 remotion/    composiciones, escenas, fondos 3D, scripts de QA, logos y láminas
+📁 hyperframes/ plantillas HTML del motor HyperFrames (escenas, subtítulos, anuncio, miniatura, láminas)
 📁 videos/      lo que lee Remotion: guiones JSON, cortes, b-roll, música, logos
 📁 raw/         brutos e intermedios pesados (fuera de git)
 📁 out/         renders, QA, miniaturas y entregas (fuera de git)
@@ -261,6 +310,7 @@ Y cuando algo nuevo falla, el agente lo arregla **y lo apunta**. El sistema apre
 | `verificar_sync.py` · `verificar_corte.py` | QA de cada escena contra su frase + hoja de contactos |
 | `07_final.py` | Montaje, −14 LUFS, capítulos, descripción, miniatura |
 | `09_shorts.py` · `10_linkedin.py` · `anuncio.py` | Shorts para 3 redes, LinkedIn, anuncios animados |
+| `motor.py` | Elige el motor (Remotion o HyperFrames) y renderiza; portada en el cuadro 0 |
 | `brutos.py` · `drive_api.py` | Traer y entregar desde Google Drive sin colgarse |
 
 </details>
@@ -286,6 +336,7 @@ El agente **nunca gasta créditos ni publica sin preguntarte**, y te dice cuánt
 ## 📜 Licencias de terceros
 
 Este proyecto: [MIT](LICENSE). Terceros: [Remotion](https://www.remotion.dev/license) (licencia propia: gratuita para individuos y equipos pequeños) ·
+[HyperFrames](https://github.com/heygen-com/hyperframes) (Apache-2.0, se usa con `npx`; sus skills se instalan aparte) ·
 [Robust Video Matting](https://github.com/PeterL1n/RobustVideoMatting) (GPL-3.0, se descarga aparte vía torch.hub) ·
 MMS_FA de torchaudio · [Simple Icons](https://simpleicons.org) / Lobe Icons / SVGL para logos.
 
