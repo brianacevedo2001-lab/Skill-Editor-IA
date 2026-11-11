@@ -1,0 +1,17 @@
+{
+ "_nota": "Ejemplo de escenas y gráficos animados para HyperFrames (python pipeline/motor.py video Escenas ejemplo/escenas.json out/escenas_ejemplo.mp4). Acepta los nombres del catálogo de Remotion (callout, lowerThird, lineup, revealStat, bars) o los de HyperFrames (titulo, lowerThird, tarjetas, dato, barras). \"fondo\": \"transparente\" + salida .mov = capa con alfa para superponer.",
+ "motor": "hyperframes",
+ "duracion": 15,
+ "fondo": "marca",
+ "portada": 1.4,
+ "escenas": [
+  {"type": "callout", "from": 0, "to": 3.2, "lines": ["Responder tarde", "*cuesta ventas*"]},
+  {"type": "lowerThird", "from": 3.2, "to": 6.0},
+  {"type": "lineup", "from": 6.0, "to": 9.0, "transicion": "mancha", "title": "Dónde escriben tus *clientes*",
+   "items": [{"text": "WhatsApp"}, {"text": "Instagram", "strikeAt": 7.9}, {"text": "Tu web", "accent": true}]},
+  {"type": "revealStat", "from": 9.0, "to": 12.0, "transicion": "barrido", "transicionX": 0.2, "transicionY": 0.8,
+   "display": "78 %", "label": "compra al *primero* que responde", "fuente": "Estudio de ejemplo, 2026"},
+  {"type": "bars", "from": 12.0, "to": 15, "title": "Respuesta en *menos de 5 min*",
+   "items": [{"label": "Con IA", "value": 92, "accent": true}, {"label": "A mano", "value": 34}], "fuente": "Datos ficticios"}
+ ]
+}

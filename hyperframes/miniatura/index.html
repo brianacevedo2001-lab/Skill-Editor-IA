@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- Miniatura de YouTube (1920×1080, se exporta a 1280×720), equivalente a remotion/src/Miniatura.tsx.
+     Guion: videos/<id>/miniatura.json {imagen, etiqueta?, destacado, titulo ("\n" parte), desplazamiento?}.
+     La imagen base (persona + fondo, sin texto) viene de Higgsfield o de un fotograma; el texto se pone aquí para que
+     salga nítido con las tipografías y colores de la marca. Es un cuadro fijo: data-no-timeline y snapshot en t=0. -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=__ANCHO__, height=__ALTO__" />
+    <title>Miniatura</title>
+    <!--MARCA-->
+    <link rel="stylesheet" href="assets/comun/hf.css" />
+    <style>
+      #base { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; }
+      #velo { background: linear-gradient(90deg, color-mix(in srgb, var(--fondo) 92%, transparent) 0%,
+                          color-mix(in srgb, var(--fondo) 75%, transparent) 38%, transparent 62%); }
+      #texto { position: absolute; left: 110px; top: 0; bottom: 0; width: 1020px; display: flex; flex-direction: column;
+               justify-content: center; gap: 18px; }
+      .etiqueta { font-family: var(--f-mono); font-size: 38px; letter-spacing: 6px; text-transform: uppercase; color: var(--etiqueta); }
+      .destacado { font-family: var(--f-texto); font-weight: 800; font-size: 250px; line-height: 0.9; letter-spacing: -8px; color: var(--acento);
+                   text-shadow: 0 0 60px color-mix(in srgb, var(--acento) 45%, transparent), 0 8px 30px rgba(0,0,0,.6); }
+      .titulo-min { font-family: var(--f-texto); font-weight: 800; font-size: 104px; line-height: 1; letter-spacing: -3px; color: var(--texto);
+                    text-shadow: 0 6px 24px rgba(0,0,0,.7); }
+      .titulo-min div { display: block; }
+      #isotipo { position: absolute; left: 110px; bottom: 70px; height: 70px; opacity: 0.9; }
+    </style>
+    <script src="assets/datos.js"></script>
+  </head>
+  <body>
+    <div id="raiz" data-composition-id="miniatura" data-start="0" data-width="__ANCHO__" data-height="__ALTO__"
+         data-duration="1" data-no-timeline style="width: __ANCHO__px; height: __ALTO__px">
+      <div id="fondo" class="capa fondo-base"></div>
+      <!--MEDIOS-->
+      <div id="velo" class="capa"></div>
+      <div id="texto" class="clip" data-start="0" data-duration="1" data-track-index="2"></div>
+    </div>
+    <script src="assets/comun/hf.js"></script>
+    <script>
+      const d = HF.D.pieza;
+      const base = document.getElementById("base");
+      if (base && d.desplazamiento) base.style.transform = `translateX(${d.desplazamiento * 100}%)`;
+      document.getElementById("texto").innerHTML =
+        (d.etiqueta ? `<div class="etiqueta">${HF.esc(d.etiqueta)}</div>` : "") +
+        `<div class="destacado">${HF.esc(d.destacado)}</div>` +
+        `<div class="titulo-min">${String(d.titulo ?? "").split("\n").map((l) => `<div>${HF.esc(l)}</div>`).join("")}</div>`;
+      if (HF.D.marca.logos.isotipo) {
+        const img = document.createElement("img");
+        img.id = "isotipo"; img.src = HF.D.marca.logos.isotipo; img.alt = "";
+        document.getElementById("raiz").appendChild(img);
+      }
+    </script>
+  </body>
+</html>

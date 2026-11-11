@@ -1,0 +1,68 @@
+<!doctype html>
+<!-- Láminas de LinkedIn (1080×1350, 4:5): carrusel PDF e imagen suelta, equivalente a remotion/src/Lamina.tsx.
+     Guion: videos/<id>/linkedin.json {carrusel: [{tipo: portada|idea|dato|cierre, kicker?, titulo, texto?, numero?, valor?,
+     logo?, cta?}], imagen?: {…}}. Cada lámina ocupa 1 s del «vídeo» (la imagen suelta, la última) y motor.py saca un
+     cuadro de cada una con `hyperframes snapshot`. Son cuadros fijos: data-no-timeline. -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=__ANCHO__, height=__ALTO__" />
+    <title>Láminas</title>
+    <!--MARCA-->
+    <link rel="stylesheet" href="assets/comun/hf.css" />
+    <style>
+      .lamina { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+      .lam-cuerpo { position: absolute; left: 0; top: 0; width: 100%; height: 100%; padding: 110px 96px 150px; display: flex;
+                    flex-direction: column; justify-content: center; gap: 40px; }
+      .lam-kicker { font-family: var(--f-mono); font-size: 30px; letter-spacing: 6px; text-transform: uppercase; color: var(--etiqueta); }
+      .lam-num { font-family: var(--f-titulares); font-style: var(--estilo-titulares); font-size: 240px; line-height: 0.9; color: var(--acento);
+                 text-shadow: 0 0 50px color-mix(in srgb, var(--acento) 40%, transparent); }
+      .lam-valor { font-family: var(--f-titulares); font-style: var(--estilo-titulares); font-size: 260px; line-height: 0.9; }
+      .lam-titulo { font-family: var(--f-titulares); font-style: var(--estilo-titulares); line-height: 1.04; letter-spacing: -0.01em; }
+      .lam-titulo .ac { color: var(--acento); }
+      .lam-texto { font-weight: 500; font-size: 50px; line-height: 1.32; padding: 30px 36px; border-radius: 26px; }
+      .lam-cta { align-self: flex-start; font-weight: 800; font-size: 48px; border-radius: 0.4em; }
+      .lam-sitio { font-family: var(--f-mono); font-size: 32px; color: var(--texto-suave); letter-spacing: 2px; }
+      .lam-pie { position: absolute; left: 96px; right: 96px; bottom: 60px; display: flex; align-items: center; gap: 18px; }
+      .lam-avatar { width: 64px; height: 64px; border-radius: 32px; border: 2px solid var(--acento); object-fit: cover; }
+      .lam-persona { display: flex; flex-direction: column; }
+      .lam-persona b { font-weight: 700; font-size: 28px; }
+      .lam-persona span { font-family: var(--f-mono); font-size: 20px; letter-spacing: 2px; color: var(--texto-suave); text-transform: uppercase; }
+      .lam-hueco { flex: 1; }
+      .lam-pag { font-family: var(--f-mono); font-size: 26px; color: var(--texto-suave); }
+      .lam-iso { height: 56px; opacity: 0.9; }
+    </style>
+    <script src="assets/datos.js"></script>
+  </head>
+  <body>
+    <div id="raiz" data-composition-id="lamina" data-start="0" data-width="__ANCHO__" data-height="__ALTO__"
+         data-duration="__DURACION__" data-no-timeline style="width: __ANCHO__px; height: __ALTO__px">
+      <!--CLIPS-->
+    </div>
+    <script src="assets/comun/hf.js"></script>
+    <script>
+      const D = HF.D, M = D.marca;
+      const tamTitulo = { portada: 132, cierre: 112 };
+      document.querySelectorAll("[data-lamina]").forEach((el) => {
+        const l = D.laminas[Number(el.dataset.lamina)];
+        const suelta = l._suelta, pagina = Number(el.dataset.lamina) + 1, total = D.total;
+        const sitio = (M.sitio || "").replace(/^https?:\/\//, "");
+        el.innerHTML = `<div id="fondo-${pagina}" class="capa"></div><div class="lam-cuerpo">` +
+          (l.kicker ? `<div class="lam-kicker">${HF.esc(l.kicker)}</div>` : "") +
+          (l.tipo === "idea" && l.numero !== undefined ? `<div class="lam-num">${String(l.numero).padStart(2, "0")}</div>` : "") +
+          (l.tipo === "dato" && l.valor ? `<div class="lam-valor">${HF.esc(l.valor)}</div>` : "") +
+          `<div class="lam-titulo" style="font-size:${tamTitulo[l.tipo] ?? 100}px">${HF.conAcento(l.titulo)}</div>` +
+          (l.texto ? `<div class="lam-texto bloque cristal">${HF.esc(l.texto)}</div>` : "") +
+          (l.tipo === "cierre" && l.cta ? `<div class="lam-cta bloque acento">${HF.esc(l.cta)}</div>` : "") +
+          (l.tipo === "cierre" ? `<div class="lam-sitio">${HF.esc(sitio)} · ${HF.esc(M.handle)}</div>` : "") +
+          `</div><div class="lam-pie">` +
+          (M.logos.avatar ? `<img class="lam-avatar" src="${M.logos.avatar}" alt="">` : "") +
+          `<div class="lam-persona"><b>${HF.esc(M.persona.nombre)}</b><span>${HF.esc(M.persona.cargo)}</span></div><div class="lam-hueco"></div>` +
+          (suelta ? (M.logos.isotipo ? `<img class="lam-iso" src="${M.logos.isotipo}" alt="">` : "")
+                  : `<span class="lam-pag">${pagina}/${total}${pagina < total ? "  →" : ""}</span>`) + `</div>`;
+        // fondo de marca quieto (sin línea de tiempo): mismas manchas que los vídeos, con semilla por lámina
+        HF.montarFondo(null, el.firstElementChild, false);
+      });
+    </script>
+  </body>
+</html>

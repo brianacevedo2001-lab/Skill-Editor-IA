@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- Escenas y gráficos animados (títulos, tarjetas, lower thirds, datos, barras, transiciones) sobre el fondo de la marca
+     o con fondo transparente (para superponer en otro vídeo: salida .mov ProRes 4444 con alfa).
+     NO se edita a mano por proyecto: pipeline/motor.py copia esta carpeta a out/hyperframes/<trabajo>/, rellena los
+     marcadores y escribe assets/datos.js con la marca y el guion (videos/<id>/escenas.json). -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=__ANCHO__, height=__ALTO__" />
+    <title>Escenas</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <!--MARCA-->
+    <link rel="stylesheet" href="assets/comun/hf.css" />
+    <script src="assets/datos.js"></script>
+  </head>
+  <body>
+    <div id="raiz" data-composition-id="escenas" data-start="0" data-width="__ANCHO__" data-height="__ALTO__"
+         data-duration="__DURACION__" style="width: __ANCHO__px; height: __ALTO__px">
+      <div id="fondo" class="capa" data-layout-ignore></div>
+      <!--CLIPS-->
+    </div>
+    <script src="assets/comun/hf.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      if (!HF.D.transparente) HF.montarFondo(tl, document.getElementById("fondo"), false);
+      HF.montarEscenas(tl);
+      HF.montarTransiciones(tl);
+      window.__timelines["escenas"] = tl;
+    </script>
+  </body>
+</html>

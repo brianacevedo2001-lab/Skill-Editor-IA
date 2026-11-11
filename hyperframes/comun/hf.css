@@ -1,0 +1,106 @@
+/* Estilos comunes de las plantillas de HyperFrames (marca blanca).
+   Los colores y las familias llegan como variables CSS que escribe pipeline/motor.py desde marca/marca.json:
+   --fondo --superficie --superficie2 --borde --texto --texto-suave --acento --acento2 --brillo --etiqueta
+   --f-titulares --f-texto --f-mono --estilo-titulares. Nada de colores ni nombres fijos aquí. */
+
+html, body { margin: 0; padding: 0; background: var(--fondo); color: var(--texto); }
+html.transparente, html.transparente body { background: transparent; }   /* capa con alfa (.mov) */
+* { box-sizing: border-box; }
+
+#raiz { position: relative; overflow: hidden; font-family: var(--f-texto); color: var(--texto); }
+
+/* Capas a pantalla completa (sin tiempo propio o con él). */
+.capa { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+
+/* ───────── fondo de marca: base + manchas de acento + rejilla de puntos ───────── */
+.fondo-base { background: var(--fondo); }
+.mancha { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; }
+.puntos { background-image: radial-gradient(color-mix(in srgb, var(--texto) 9%, transparent) 1.6px, transparent 1.6px);
+          background-size: 34px 34px; }
+.fondo-claro { background: color-mix(in srgb, var(--brillo) 38%, #ffffff); }
+
+/* Degradado de acento sobre el que va texto: se queda cerca de --acento para que el texto siga leyéndose
+   (con un acento2 claro, el extremo del degradado bajaba el contraste del texto blanco). */
+:root { --degradado: linear-gradient(135deg, var(--acento), color-mix(in srgb, var(--acento) 72%, var(--acento2))); }
+
+/* ───────── escenas ───────── */
+.escena { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.contenido { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+             width: 100%; height: 100%; padding: var(--seg-arriba) var(--seg-der) var(--seg-abajo) var(--seg-izq); }
+
+.bloque { display: inline-block; padding: 0.08em 0.32em 0.14em; border-radius: 0.22em; line-height: 1.05; }
+.bloque.cristal { background: color-mix(in srgb, var(--superficie) 72%, transparent);
+                  border: 2px solid color-mix(in srgb, var(--texto) 14%, transparent);
+                  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35); }
+.bloque.acento { background: var(--degradado); color: var(--sobre-acento);
+                 box-shadow: 0 18px 60px color-mix(in srgb, var(--acento) 45%, transparent); }
+
+.titular { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.titular .linea { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+.titular .bloque { font-family: var(--f-titulares); font-style: var(--estilo-titulares); }
+.pal { display: inline-block; }
+
+.kicker { font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.2em; color: var(--etiqueta); }
+.fuente { font-family: var(--f-mono); font-size: 28px; color: var(--texto-suave); letter-spacing: 0.04em; }
+
+/* lower third */
+.lt { position: absolute; display: flex; align-items: stretch; gap: 0; }
+.lt-barra { width: 10px; border-radius: 6px; background: linear-gradient(180deg, var(--acento), var(--acento2)); }
+.lt-caja { display: flex; flex-direction: column; justify-content: center; padding: 18px 30px; margin-left: 14px; border-radius: 18px;
+           background: color-mix(in srgb, var(--fondo) 92%, transparent); border: 2px solid var(--borde); }
+.lt-nombre { font-weight: 800; font-size: 50px; line-height: 1.1; }
+.lt-cargo { font-family: var(--f-mono); font-size: 28px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-suave); margin-top: 6px; }
+
+/* tarjetas */
+.tarjetas { display: flex; gap: 28px; justify-content: center; align-items: stretch; flex-wrap: wrap; width: 100%; }
+.movil .tarjetas { flex-direction: column; align-items: center; }
+/* Piezas en 9:16: ×1,22 o se ven pequeñas (regla de CLAUDE.md). */
+.movil .chat, .movil .tarjetas, .movil .barras { zoom: 1.22; }
+.tarjeta { display: flex; align-items: center; justify-content: center; gap: 18px; min-width: 280px; max-width: 520px; padding: 28px 36px;
+           border-radius: 26px; font-family: var(--f-titulares); font-style: var(--estilo-titulares); font-size: 64px; line-height: 1.05;
+           text-align: center; background: color-mix(in srgb, var(--superficie) 80%, transparent);
+           border: 2px solid color-mix(in srgb, var(--texto) 12%, transparent); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); }
+.tarjeta.acento { background: var(--degradado); color: var(--sobre-acento); border-color: transparent; }
+.tarjeta img { height: 72px; }
+.titulo-escena { font-family: var(--f-titulares); font-style: var(--estilo-titulares); font-size: 72px; text-align: center; line-height: 1.1; }
+.ac { color: var(--acento); }
+
+/* dato */
+.cifra { font-family: var(--f-titulares); font-style: var(--estilo-titulares); font-size: 300px; line-height: 0.9; color: var(--acento);
+         text-shadow: 0 0 80px color-mix(in srgb, var(--acento) 45%, transparent); }
+.cifra-label { font-size: 58px; font-weight: 700; text-align: center; max-width: 1200px; line-height: 1.15; }
+
+/* barras */
+.barras { display: flex; flex-direction: column; gap: 26px; width: 100%; max-width: 1300px; }
+.barra-fila { display: flex; flex-direction: column; gap: 10px; }
+.barra-cab { display: flex; justify-content: space-between; font-size: 42px; font-weight: 700; }
+.barra-fondo { position: relative; width: 100%; height: 46px; border-radius: 23px; background: color-mix(in srgb, var(--texto) 10%, transparent); overflow: hidden; }
+.barra-relleno { position: absolute; left: 0; top: 0; height: 100%; width: 100%; border-radius: 23px; transform-origin: 0 50%;
+                 background: color-mix(in srgb, var(--texto) 55%, transparent); }
+.barra-fila.acento .barra-relleno { background: linear-gradient(90deg, var(--acento), var(--acento2)); }
+.barra-fila.acento .barra-cab { color: var(--acento); }
+
+/* chat */
+.chat { display: flex; flex-direction: column; gap: 22px; width: 100%; max-width: 860px; padding: 34px; border-radius: 40px;
+        background: var(--superficie); border: 2px solid var(--borde); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.35); }
+.chat-cab { display: flex; align-items: center; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid var(--borde); }
+.chat-av { width: 72px; height: 72px; border-radius: 36px; display: grid; place-items: center; font-weight: 800; font-size: 28px;
+           background: var(--degradado); color: var(--sobre-acento); }
+.chat-nombre { font-weight: 800; font-size: 34px; }
+.burbuja { max-width: 78%; padding: 20px 26px; border-radius: 28px; font-size: 36px; line-height: 1.3; }
+.burbuja.cliente { align-self: flex-start; background: var(--superficie2); border-bottom-left-radius: 8px; }
+.burbuja.ia { align-self: flex-end; background: var(--degradado); color: var(--sobre-acento); border-bottom-right-radius: 8px; }
+
+/* remate / final */
+.gigante { font-family: var(--f-titulares); font-style: var(--estilo-titulares); font-size: 340px; line-height: 0.9; color: var(--acento); }
+.marca-final { display: flex; flex-direction: column; align-items: center; gap: 34px; }
+.marca-final img { height: 170px; }
+.marca-nombre { font-weight: 800; font-size: 120px; letter-spacing: -0.03em; }
+.boton { padding: 22px 46px; border-radius: 999px; font-weight: 800; font-size: 50px;
+         background: var(--degradado); color: var(--sobre-acento);
+         box-shadow: 0 20px 60px color-mix(in srgb, var(--acento) 45%, transparent); }
+
+/* transición «barrido» / «mancha» */
+.barrido { pointer-events: none; }
+.barrido-disco { position: absolute; border-radius: 50%; background: var(--acento); }
+.barrido-disco.mancha { border-radius: 46% 54% 41% 59% / 52% 44% 56% 48%; }

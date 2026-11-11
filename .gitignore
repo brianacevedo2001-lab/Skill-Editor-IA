@@ -5,3 +5,7 @@ secrets/
 remotion/node_modules/
 __pycache__/
 *.ocr_cache.json
+# HyperFrames: caché/artefactos del CLI y renders si se abre una plantilla directamente
+.hyperframes/
+hyperframes/**/renders/
+hyperframes/**/node_modules/

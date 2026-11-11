@@ -1,7 +1,7 @@
 """LinkedIn: carrusel PDF, imagen suelta y texto del post (el vídeo 4:5 lo hace 09_shorts.py).
 
 Uso:
-  python pipeline/10_linkedin.py <id> [--sin-drive]
+  python pipeline/10_linkedin.py <id> [--sin-drive] [--motor remotion|hyperframes]
 
 Lee videos/<id>/linkedin.json:
   {
@@ -20,30 +20,28 @@ Se copia SIEMPRE a Drive (final/<id>/linkedin/) salvo --sin-drive.
 from __future__ import annotations
 
 import argparse
-import subprocess
-import sys
 from pathlib import Path
 
 from PIL import Image
 
-from comun import MARCA, OUT, RAIZ, VIDEOS, copiar_reanudable, leer_json
+import motor
+from comun import MARCA, OUT, VIDEOS, copiar_reanudable, leer_json
 
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("id")
     p.add_argument("--sin-drive", action="store_true")
+    motor.argumento(p)
     a = p.parse_args()
 
     guion = VIDEOS / a.id / "linkedin.json"
     cfg = leer_json(guion)
     salida = OUT / "entregas" / a.id / "linkedin"
     tmp = OUT / "linkedin" / a.id
-    print(f"Renderizando {len(cfg['carrusel'])} láminas + imagen…")
-    r = subprocess.run(["node", "scripts/laminas.mjs", f"{a.id}/linkedin.json", str(tmp)], cwd=RAIZ / "remotion",
-                       shell=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
-    if r.returncode:
-        sys.exit(f"Remotion falló:\n{r.stdout[-2000:]}\n{r.stderr[-2000:]}")
+    m = motor.elegir(cfg, a.motor)
+    print(f"Renderizando {len(cfg['carrusel'])} láminas + imagen ({m})…")
+    motor.render_laminas(f"{a.id}/linkedin.json", tmp, m)
 
     salida.mkdir(parents=True, exist_ok=True)
     laminas = sorted(tmp.glob("lamina_*.png"))

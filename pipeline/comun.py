@@ -85,6 +85,46 @@ def contar_fotogramas(ruta: Path | str) -> int:
     return int(r.stdout.strip().split(",")[0])
 
 
+def cuadro(video: Path | str, t: float, salida: Path | str) -> Path:
+    """Extrae el cuadro del segundo t a una imagen (jpg/png según la extensión)."""
+    salida = Path(salida)
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    extra = ["-q:v", "2"] if salida.suffix.lower() in (".jpg", ".jpeg") else []
+    ffmpeg("-ss", f"{max(t, 0):.3f}", "-i", str(video), "-frames:v", "1", *extra, str(salida))
+    return salida
+
+
+def portada(mp4: Path | str, t: float, jpg: Path | str | None = None) -> Path:
+    """Regla de portada: el cuadro 0 es la miniatura que muestran WhatsApp, Drive, Windows y las redes, y con las
+    animaciones que entran desde vacío sale negro. Se reemplaza por el cuadro t del propio vídeo (pantalla ya armada),
+    que además queda como <nombre>_portada.jpg (o `jpg`). Solo recodifica el vídeo (el audio se copia) y marca el MP4
+    con comment=portada… para no aplicarla dos veces."""
+    mp4 = Path(mp4)
+    jpg = Path(jpg) if jpg else mp4.with_name(mp4.stem + "_portada.jpg")
+    t = min(max(t, 0.0), max(duracion(mp4) - 0.05, 0.0))
+    tags = ffprobe_json(mp4).get("format", {}).get("tags", {})
+    if str(tags.get("comment", "")).startswith("portada"):
+        if not jpg.exists():
+            cuadro(mp4, t, jpg)
+        print(f"  portada: {mp4.name} ya la tiene ({tags['comment']})")
+        return jpg
+    png, tmp = mp4.with_name(mp4.stem + "_portada_tmp.png"), mp4.with_name(mp4.stem + "_portada_tmp.mp4")
+    try:
+        cuadro(mp4, t, png)
+        cuadro(mp4, t, jpg)
+        ffmpeg("-i", str(mp4), "-i", str(png), "-filter_complex",
+               "[0:v][1:v]overlay=0:0:enable='eq(n,0)',scale=out_color_matrix=bt709:out_range=tv,format=yuv420p[v]",
+               "-map", "[v]", "-map", "0:a?", "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-profile:v", "high",
+               "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-color_range", "tv",
+               "-c:a", "copy", "-metadata", f"comment=portada {t:.2f}s", "-movflags", "+faststart", str(tmp))
+        os.replace(tmp, mp4)
+    finally:
+        png.unlink(missing_ok=True)
+        tmp.unlink(missing_ok=True)
+    print(f"  portada: cuadro {t:.2f} s como cuadro 0 de {mp4.name} y en {jpg.name}")
+    return jpg
+
+
 def copiar_reanudable(origen: Path | str, destino: Path | str, trozo: int = 16 * 1024 * 1024) -> Path:
     """Copia secuencial por trozos a <destino>.part; si se corta, sigue donde lo dejó.
 

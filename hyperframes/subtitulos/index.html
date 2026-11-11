@@ -1,0 +1,114 @@
+<!doctype html>
+<!-- Vertical con subtítulos animados palabra a palabra (YouTube Shorts, Reels, TikTok; 4:5 para LinkedIn), equivalente a
+     la composición Short de Remotion: cámara (o pantalla + cámara en «dividido») con punch-in alterno en los cortes,
+     gancho de los primeros segundos, rótulos (callout/titulo, tarjetas, dato, barras, lowerThird), subtítulos con la
+     palabra activa en el color de acento y rótulo de cierre con el isotipo.
+     Las palabras y sus tiempos son las del pipeline (02_transcribe → 03_tomas → 01_cut_silences + alinear.py), ya
+     trasladadas al tiempo del short por 09_shorts.py (short.json › palabras). pipeline/motor.py escribe los grupos de
+     subtítulos como clips en el HTML y la marca/guion en assets/datos.js. -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=__ANCHO__, height=__ALTO__" />
+    <title>Subtítulos</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <!--MARCA-->
+    <link rel="stylesheet" href="assets/comun/hf.css" />
+    <style>
+      .velo { background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, transparent 18%, transparent 72%, rgba(0,0,0,.5) 100%); }
+      #oscurecer { background: color-mix(in srgb, var(--fondo) 62%, transparent); opacity: 0; }
+      .marco { position: absolute; left: 0; overflow: hidden; }
+      .marco video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; }
+      .union { position: absolute; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--acento), var(--acento2));
+               box-shadow: 0 0 24px color-mix(in srgb, var(--acento) 60%, transparent); }
+      #subtitulos { pointer-events: none; }
+      .grupo { position: absolute; left: 0; width: 100%; height: 0; overflow: visible; }
+      .grupo-in { position: absolute; left: var(--seg-izq); right: var(--seg-der); top: 0; transform: translateY(-50%);
+                  display: flex; flex-wrap: wrap; justify-content: center; gap: 0 30px; }
+      .w { display: inline-block; font-family: var(--f-texto); font-weight: 800; line-height: 1.1; letter-spacing: -0.01em;
+           color: var(--texto); -webkit-text-stroke: 12px #000; paint-order: stroke fill; text-shadow: 0 6px 18px rgba(0,0,0,.65); }
+      .gancho { display: flex; flex-direction: column; align-items: center; gap: 14px; position: absolute; left: var(--seg-izq);
+                right: var(--seg-der); }
+      .gancho .bloque { font-family: var(--f-texto); font-style: normal; font-weight: 800; font-size: 104px; line-height: 1; letter-spacing: -0.02em; }
+      .gancho .sub { font-weight: 800; font-size: 70px; text-align: center; -webkit-text-stroke: 10px #000; paint-order: stroke fill; }
+      .cierre { position: absolute; left: 0; width: 100%; display: flex; justify-content: center; }
+      .cierre .bloque { display: flex; align-items: center; gap: 20px; padding: 18px 30px; border-radius: 24px; font-weight: 700; font-size: 44px;
+                        background: linear-gradient(160deg, color-mix(in srgb, var(--superficie) 94%, transparent), color-mix(in srgb, var(--fondo) 90%, transparent)); }
+      .cierre img { height: 56px; }
+    </style>
+    <script src="assets/datos.js"></script>
+  </head>
+  <body>
+    <div id="raiz" data-composition-id="subtitulos" data-start="0" data-width="__ANCHO__" data-height="__ALTO__"
+         data-duration="__DURACION__" style="width: __ANCHO__px; height: __ALTO__px">
+      <div id="fondo" class="capa fondo-base" data-layout-ignore></div>
+      <!--MEDIOS-->
+      <div id="velo" class="capa velo" data-layout-ignore></div>
+      <div id="oscurecer" class="capa" data-layout-ignore></div>
+      <!--CLIPS-->
+    </div>
+    <script src="assets/comun/hf.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const D = HF.D, L = HF.L;
+
+      // Punch-in alterno en cada corte (máx. 9 %), solo con la cámara a pantalla completa; mismo criterio que Short.tsx.
+      const cam = document.getElementById("marco-camara");
+      if (cam && D.layout === "camara") {
+        const p = Math.min(Math.max(D.punchIn ?? 0.09, 0), 0.09);
+        const foco = D.foco ?? [0.5, 0.4];
+        gsap.set(cam, { transformOrigin: `${foco[0] * 100}% ${foco[1] * 100}%` });
+        tl.set(cam, { scale: 1 }, 0);
+        let ultimo = 0, arriba = false;
+        for (const c of D.cortes ?? []) {
+          if (c - ultimo < 1.2) continue;
+          arriba = !arriba;
+          tl.set(cam, { scale: arriba ? 1 + p : 1 }, c);
+          ultimo = c;
+        }
+      }
+
+      // Rótulos: la cámara se oscurece detrás (en vez de desenfocar: los filtros sobre el metraje no se usan en HyperFrames).
+      const osc = document.getElementById("oscurecer");
+      for (const e of D.escenas) {
+        tl.fromTo(osc, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out", immediateRender: false }, e.from);
+        tl.to(osc, { opacity: 0, duration: 0.25, ease: "power2.in" }, Math.max(e.from + 0.25, e.to - 0.25));
+      }
+      HF.montarEscenas(tl);
+
+      // Subtítulos: el grupo entra con un pequeño zoom; la palabra que suena va en acento y un 8 % más grande.
+      document.querySelectorAll(".grupo").forEach((g) => {
+        const t0 = Number(g.dataset.start);
+        tl.fromTo(g.firstElementChild, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power2.out" }, t0);
+        const ws = [...g.querySelectorAll(".w")];
+        ws.forEach((w, i) => {
+          const a = Math.max(Number(w.dataset.t), t0);
+          tl.fromTo(w, { color: D.marca.colores.texto, scale: 1 }, { color: D.marca.colores.acento, scale: 1.08, duration: 0.06, immediateRender: false }, a);
+          if (i + 1 < ws.length) tl.to(w, { color: D.marca.colores.texto, scale: 1, duration: 0.06 }, Math.max(Number(ws[i + 1].dataset.t), t0));
+        });
+      });
+
+      // Gancho de los primeros segundos.
+      const gancho = document.getElementById("gancho");
+      if (gancho) {
+        const lineas = D.gancho.lineas;
+        const y = D.gancho.posicion === "abajo" ? Math.round(L.alto * 0.56) : L.seg.arriba + 40;
+        gancho.innerHTML = `<div class="gancho" style="top:${y}px">` + lineas.map((l, i) => i === 0
+          ? `<span class="bloque acento">${HF.esc(l)}</span>` : `<div class="sub">${HF.esc(l)}</div>`).join("") + `</div>`;
+        const g = gancho.firstElementChild;
+        [...g.children].forEach((c, i) => tl.fromTo(c, { opacity: 0, scale: 0.8, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.33, ease: "back.out(1.6)" }, 0.05 + i * 0.17));
+        tl.to(g, { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" }, D.gancho.hasta - 0.33);
+      }
+
+      // Cierre con el isotipo y el texto (p. ej. «Video completo en YouTube»).
+      const cierre = document.getElementById("cierre");
+      if (cierre) {
+        cierre.innerHTML = `<div class="cierre" style="bottom:${L.seg.abajo + 40}px"><div class="bloque">` +
+          (D.marca.logos.isotipo ? `<img src="${D.marca.logos.isotipo}" alt="">` : "") + `<span>${HF.esc(D.cierre.texto)}</span></div></div>`;
+        tl.fromTo(cierre.querySelector(".bloque"), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, D.cierre.desde);
+      }
+      window.__timelines["subtitulos"] = tl;
+    </script>
+  </body>
+</html>

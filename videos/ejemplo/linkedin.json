@@ -1,0 +1,10 @@
+{
+ "post": "Texto del post de ejemplo.\n\n#ventas #ia",
+ "carrusel": [
+  {"tipo": "portada", "kicker": "Serie · 1", "titulo": "La venta se gana en los *primeros minutos*"},
+  {"tipo": "idea", "numero": 1, "titulo": "Responde *antes* que nadie", "texto": "El 78 % compra al primero que contesta."},
+  {"tipo": "dato", "valor": "4 h", "titulo": "al día respondiendo *a mano*"},
+  {"tipo": "cierre", "titulo": "¿Lo probamos en *tu negocio*?", "cta": "Video completo en YouTube"}
+ ],
+ "imagen": {"tipo": "dato", "kicker": "Dato", "valor": "78 %", "titulo": "compra al *primero* que responde"}
+}

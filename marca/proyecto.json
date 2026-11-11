@@ -1,4 +1,6 @@
 {
+  "_motor": "Motor de render por defecto: \"remotion\" (lo de siempre) o \"hyperframes\" (recomendado para piezas nuevas). Cada pieza puede cambiarlo con \"motor\" en su guion o --motor en el script. Ver pipeline/motor.py.",
+  "motor": "remotion",
   "equipo": {
     "sistema": "Windows 11",
     "gpu": "NVIDIA con 8 GB o más (CUDA)",

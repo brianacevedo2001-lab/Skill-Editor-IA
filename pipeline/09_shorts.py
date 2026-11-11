@@ -3,10 +3,11 @@ Instagram Reels y TikTok (sin música; el usuario la añade al publicar).
 
 Uso:
   python pipeline/09_shorts.py frases <id> <parte>          # frases con tiempos, para elegir fragmentos
-  python pipeline/09_shorts.py <id> [nombre…] [--sin-render] [--sin-drive]
+  python pipeline/09_shorts.py <id> [nombre…] [--sin-render] [--sin-drive] [--motor remotion|hyperframes]
 
 Lee videos/<id>/shorts.json:
   {
+    "motor": "hyperframes",                                ← opcional (pipeline/motor.py; si no, el de proyecto.json)
     "musica": {"src": "_shared/music/jazz_a_night_alone.m4a", "volumen": 0.13},   ← solo la versión de YouTube
     "cierre": "Video completo en YouTube",
     "shorts": [{
@@ -28,8 +29,9 @@ Lee videos/<id>/shorts.json:
   }
 
 Por cada short: recorta los tramos (cámara, pantalla y voz), traslada palabras/cortes/callouts al tiempo
-del short, escribe videos/<id>/shorts/<nombre>/short.json, renderiza la composición Short de Remotion
-(voz + efectos) y exporta tres versiones a −14 LUFS en out/entregas/<id>/shorts/ (+ portada y textos).
+del short, escribe videos/<id>/shorts/<nombre>/short.json, renderiza la composición Short (Remotion, o la plantilla
+hyperframes/subtitulos si el motor es HyperFrames: pipeline/motor.py) y exporta tres versiones a −14 LUFS en
+out/entregas/<id>/shorts/ (+ portada y textos).
 Siempre se copia a Drive (final/<id>/shorts/) salvo --sin-drive.
 """
 from __future__ import annotations
@@ -37,11 +39,11 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
-from comun import (FPS, MARCA, OUT, RAIZ, VIDEOS, contar_fotogramas, copiar_reanudable, duracion, escribir_json,
+import motor
+from comun import (FPS, MARCA, OUT, VIDEOS, contar_fotogramas, copiar_reanudable, duracion, escribir_json,
                    ffmpeg, ffprobe_json, leer_json)
 
 OBJ_I, OBJ_TP = -14.0, -1.5
@@ -277,20 +279,22 @@ def preparar(id_: str, s: dict, cierre_defecto: str, foco_camara: list[float]) -
 
 
 # ───────────────────────── render y exportación ─────────────────────────
-def render(carpeta: Path, salida: Path, composicion: str = "Short", portada: bool = True) -> None:
-    """Short = 1080×1920; Linkedin = la misma edición en 4:5 (1080×1350)."""
-    props = f"--props={{\"guion\":\"{(carpeta / 'short.json').relative_to(VIDEOS).as_posix()}\"}}"
-    base = ["npx", "remotion"]
-    cmds = [base + ["render", "src/index.ts", composicion, str(salida), props,
-                    "--hardware-acceleration=if-possible", "--timeout=180000", "--log=error"]]
+def render(carpeta: Path, salida: Path, composicion: str = "Short", portada: bool = True, motor_: str | None = None) -> None:
+    """Short = 1080×1920; Linkedin = la misma edición en 4:5 (1080×1350). Con portada=True deja también portada.jpg
+    (cuadro de 1,33 s) junto a la salida. El motor lo decide pipeline/motor.py (--motor › shorts.json › proyecto.json)."""
+    guion = (carpeta / "short.json").relative_to(VIDEOS).as_posix()
+    m = motor_ or motor.elegir(leer_json(carpeta / "short.json"))
+    if m == "hyperframes":
+        # HyperFrames: el cuadro 0 pasa a ser el de 1,33 s (regla de portada) y ese mismo cuadro es portada.jpg.
+        motor.render_video(composicion, guion, salida, m, portada_t=40 / FPS,
+                           portada_jpg=salida.with_name("portada.jpg") if portada else None)
+        return
+    motor.render_video(composicion, guion, salida, m, silencioso=True,
+                       remotion_extra=["--hardware-acceleration=if-possible", "--timeout=180000", "--log=error"])
     if portada:
-        cmds.append(base + ["still", "src/index.ts", composicion, str(salida.with_name("portada.jpg")), props, "--frame=40",
-                            "--image-format=jpeg", "--jpeg-quality=92", "--timeout=180000", "--log=error"])
-    for cmd in cmds:
-        r = subprocess.run(cmd, cwd=RAIZ / "remotion", shell=True, capture_output=True, text=True,
-                           encoding="utf-8", errors="replace")
-        if r.returncode:
-            sys.exit(f"Remotion falló:\n{r.stdout[-2000:]}\n{r.stderr[-2000:]}")
+        motor.render_still(composicion, guion, salida.with_name("portada.jpg"), m, silencioso=True,
+                           remotion_extra=["--frame=40", "--image-format=jpeg", "--jpeg-quality=92", "--timeout=180000",
+                                           "--log=error"])
 
 
 def exportar(base: Path, salida: Path, musica: dict | None, voz: Path | None = None) -> str:
@@ -352,9 +356,11 @@ def main() -> None:
     p.add_argument("nombres", nargs="*")
     p.add_argument("--sin-render", action="store_true", help="solo prepara material y short.json")
     p.add_argument("--sin-drive", action="store_true")
+    motor.argumento(p)
     a = p.parse_args()
 
     cfg = leer_json(VIDEOS / a.id / "shorts.json")
+    m = motor.elegir(cfg, a.motor)
     canal = leer_json(MARCA / "canal.json")
     entrega = OUT / "entregas" / a.id / "shorts"
     entrega.mkdir(parents=True, exist_ok=True)
@@ -370,8 +376,8 @@ def main() -> None:
             continue
         base = OUT / "shorts" / a.id / s["nombre"] / "base.mp4"
         base.parent.mkdir(parents=True, exist_ok=True)
-        print("  render Remotion…")
-        render(carpeta, base)
+        print(f"  render {m}…")
+        render(carpeta, base, motor_=m)
         for plat, con_musica in PLATAFORMAS.items():
             sal = entrega / f"{a.id}_{s['nombre']}_{plat}.mp4"
             lufs = exportar(base, sal, cfg.get("musica") if con_musica else None, carpeta / "voz.wav")
@@ -380,7 +386,7 @@ def main() -> None:
         if s.get("linkedin", True):
             print("  render LinkedIn 4:5…")
             base_li = base.with_name("base_linkedin.mp4")
-            render(carpeta, base_li, "Linkedin", portada=False)
+            render(carpeta, base_li, "Linkedin", portada=False, motor_=m)
             dest_li = OUT / "entregas" / a.id / "linkedin"
             dest_li.mkdir(parents=True, exist_ok=True)
             sal = dest_li / f"{a.id}_{s['nombre']}_linkedin.mp4"
